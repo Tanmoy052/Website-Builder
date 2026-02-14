@@ -34,14 +34,19 @@ export default function StudioPage() {
 
   useEffect(() => {
     // Check session on load
-    fetch("/api/auth/session")
-      .then((res) => res.json())
-      .then((data) => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("/api/auth/session");
+        const data = await res.json();
         if (data.isLoggedIn) {
           setUser(data.user);
           loadHistory();
         }
-      });
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+    checkSession();
   }, []);
 
   const loadHistory = async () => {
@@ -84,6 +89,10 @@ export default function StudioPage() {
 
       const data = await response.json();
 
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       if (data.isWebsiteRequest) {
         // If the AI decides to generate a website
         const genResponse = await fetch("/api/generate", {
@@ -92,6 +101,12 @@ export default function StudioPage() {
           body: JSON.stringify({ prompt: content, model: selectedModel }),
         });
         const genData = await genResponse.json();
+        console.log("Website generation response:", genData);
+
+        if (genData.error || !genData.files) {
+          throw new Error(genData.error || "Failed to generate website files");
+        }
+
         setGeneratedFiles(genData.files);
         setMessages((prev) => [
           ...prev,

@@ -46,16 +46,26 @@ class MockDB {
   otps: OTP[] = [];
 
   async findUserByEmail(email: string) {
-    return this.users.find((u) => u.email === email);
+    const normalizedEmail = email.toLowerCase().trim();
+    return this.users.find(
+      (u) => u.email.toLowerCase().trim() === normalizedEmail,
+    );
   }
 
   async createUser(user: User) {
-    this.users.push(user);
-    return user;
+    const normalizedUser = {
+      ...user,
+      email: user.email.toLowerCase().trim(),
+    };
+    this.users.push(normalizedUser);
+    return normalizedUser;
   }
 
   async updateUserVerification(email: string, isVerified: boolean) {
-    const user = this.users.find((u) => u.email === email);
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = this.users.find(
+      (u) => u.email.toLowerCase().trim() === normalizedEmail,
+    );
     if (user) user.isVerified = isVerified;
   }
 
@@ -99,4 +109,5 @@ class MockDB {
   }
 }
 
-export const db = new MockDB();
+export const db = (global as any).mockDb || new MockDB();
+if (process.env.NODE_ENV !== "production") (global as any).mockDb = db;

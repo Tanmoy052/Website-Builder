@@ -18,7 +18,7 @@ interface PreviewPanelProps {
 }
 
 export const PreviewPanel: React.FC<PreviewPanelProps> = ({
-  files,
+  files = [],
   isGenerating,
 }) => {
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">(
@@ -28,13 +28,15 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
 
   const getPreviewContent = () => {
-    const htmlFile =
-      files.find((f) => f.path.endsWith(".html")) ||
-      files.find((f) => f.path.includes("page.tsx"));
-    return htmlFile ? htmlFile.content : "No preview available";
+    const indexFile = files.find((f) => f.path === "index.html");
+    if (!indexFile) {
+      return "No preview available";
+    }
+    return indexFile.content;
   };
 
   const handleExportZip = async () => {
+    if (!files || files.length === 0) return;
     try {
       const response = await fetch("/api/export-zip", {
         method: "POST",
@@ -58,7 +60,7 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
   return (
     <div className="flex flex-col h-full bg-studio-bg border-l border-studio-border">
       {/* Header */}
-      <div className="h-14 bg-white border-bottom border-studio-border flex items-center justify-between px-4">
+      <div className="h-14 bg-white border-b border-studio-border flex items-center justify-between px-4">
         <div className="flex bg-gray-100 p-1 rounded-lg">
           <button
             onClick={() => setActiveTab("preview")}
@@ -106,9 +108,9 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
 
           <button
             onClick={handleExportZip}
-            disabled={files.length === 0}
+            disabled={!files || files.length === 0}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors text-xs font-medium ${
-              files.length > 0
+              files && files.length > 0
                 ? "bg-gray-900 text-white hover:bg-black"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
@@ -141,7 +143,7 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
                     : "w-[375px]"
               }`}
             >
-              <div className="h-8 bg-gray-50 border-bottom border-studio-border flex items-center px-4 gap-2">
+              <div className="h-8 bg-gray-50 border-b border-studio-border flex items-center px-4 gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
@@ -166,31 +168,32 @@ export const PreviewPanel: React.FC<PreviewPanelProps> = ({
               <div className="p-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 Project Files
               </div>
-              {files.map((file, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedFileIndex(idx)}
-                  className={`w-full flex items-center gap-2 px-4 py-2 text-xs font-medium transition-colors ${
-                    selectedFileIndex === idx
-                      ? "bg-white text-studio-accent border-r-2 border-studio-accent"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <FileCode size={14} />
-                  <span className="truncate">{file.path}</span>
-                </button>
-              ))}
+              {files &&
+                files.map((file, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedFileIndex(idx)}
+                    className={`w-full flex items-center gap-2 px-4 py-2 text-xs font-medium transition-colors ${
+                      selectedFileIndex === idx
+                        ? "bg-white text-studio-accent border-r-2 border-studio-accent"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <FileCode size={14} />
+                    <span className="truncate">{file.path}</span>
+                  </button>
+                ))}
             </div>
             {/* Code Editor */}
             <div className="flex-1 bg-white overflow-hidden flex flex-col">
-              <div className="h-10 bg-gray-50 border-bottom border-studio-border flex items-center px-4 justify-between">
+              <div className="h-10 bg-gray-50 border-b border-studio-border flex items-center px-4 justify-between">
                 <span className="text-xs font-mono text-gray-500">
-                  {files[selectedFileIndex]?.path}
+                  {files && files[selectedFileIndex]?.path}
                 </span>
                 <CheckCircle2 size={14} className="text-green-500" />
               </div>
               <pre className="flex-1 p-6 overflow-auto font-mono text-sm bg-gray-900 text-gray-100">
-                <code>{files[selectedFileIndex]?.content}</code>
+                <code>{files && files[selectedFileIndex]?.content}</code>
               </pre>
             </div>
           </div>

@@ -5,13 +5,21 @@ export async function POST(req: Request) {
   try {
     const { messages, model } = await req.json();
 
-    // Simple logic to detect if the user wants to build a website
     const lastMessage = messages[messages.length - 1].content.toLowerCase();
-    const isWebsiteRequest =
-      lastMessage.includes("build") ||
-      lastMessage.includes("create") ||
-      lastMessage.includes("website") ||
-      lastMessage.includes("app");
+    const websiteKeywords = [
+      "build",
+      "create",
+      "design",
+      "generate",
+      "website",
+      "landing page",
+      "app",
+      "site",
+      "ui",
+    ];
+    const isWebsiteRequest = websiteKeywords.some((keyword) =>
+      lastMessage.includes(keyword),
+    );
 
     if (isWebsiteRequest) {
       return NextResponse.json({ isWebsiteRequest: true });

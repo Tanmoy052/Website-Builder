@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db/mock';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db/mock";
+import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
+
+import { sendOTPEmail } from "@/lib/auth/email";
 
 export async function POST(req: Request) {
   try {
@@ -9,7 +11,10 @@ export async function POST(req: Request) {
 
     const existingUser = await db.findUserByEmail(email);
     if (existingUser) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 },
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -23,10 +28,9 @@ export async function POST(req: Request) {
 
     await db.createUser(newUser);
 
-    // In a real app, send OTP here
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = await bcrypt.hash(otp, 10);
-    
+
     await db.saveOTP({
       userId: newUser.id,
       otpHash,
@@ -34,13 +38,17 @@ export async function POST(req: Request) {
       used: false,
     });
 
-    console.log(`OTP for ${email}: ${otp}`); // For development
+    // Send via abstracted provider
+    await sendOTPEmail(email, otp);
 
-    return NextResponse.json({ 
-      message: 'User created. Please verify with OTP sent to your email.',
-      userId: newUser.id 
+    return NextResponse.json({
+      message: "User created. Please verify with OTP sent to your email.",
+      userId: newUser.id,
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
