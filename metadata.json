@@ -1,0 +1,5 @@
+{
+  "name": "Gemini AI Website Builder",
+  "description": "An AI-powered platform inspired by Google AI Studio to generate, preview, and export complete websites from a single prompt. Select AI models, chat with the AI, upload files, and download the full source code.",
+  "requestFramePermissions": []
+}
