@@ -1,0 +1,16 @@
+"use strict";(()=>{var e={};e.id=744,e.ids=[744],e.modules={399:e=>{e.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},517:e=>{e.exports=require("next/dist/compiled/next-server/app-route.runtime.prod.js")},2219:(e,t,r)=>{r.r(t),r.d(t,{originalPathname:()=>g,patchFetch:()=>m,requestAsyncStorage:()=>l,routeModule:()=>p,serverHooks:()=>h,staticGenerationAsyncStorage:()=>d});var n={};r.r(n),r.d(n,{POST:()=>u});var s=r(9303),a=r(8716),i=r(670),o=r(7070),c=r(2057);async function u(e){try{let{messages:t,model:r}=await e.json(),n=t[t.length-1].content.toLowerCase();if(n.includes("build")||n.includes("create")||n.includes("website")||n.includes("app"))return o.NextResponse.json({isWebsiteRequest:!0});let s=await c.y.chat(t,r);return o.NextResponse.json({content:s,isWebsiteRequest:!1})}catch(e){return console.error("Chat API Error:",e),o.NextResponse.json({error:"Internal Server Error"},{status:500})}}let p=new s.AppRouteRouteModule({definition:{kind:a.x.APP_ROUTE,page:"/api/chat/route",pathname:"/api/chat",filename:"route",bundlePath:"app/api/chat/route"},resolvedPagePath:"C:\\Users\\tanmo\\Downloads\\website-builder\\app\\api\\chat\\route.ts",nextConfigOutput:"",userland:n}),{requestAsyncStorage:l,staticGenerationAsyncStorage:d,serverHooks:h}=p,g="/api/chat/route";function m(){return(0,i.patchFetch)({serverHooks:h,staticGenerationAsyncStorage:d})}},2057:(e,t,r)=>{r.d(t,{y:()=>i});var n=r(1258);class s{constructor(){this.genAI=new n.$D(process.env.GEMINI_API_KEY||"")}async chat(e,t){let r=this.genAI.getGenerativeModel({model:"gemini-1.5-flash"}).startChat({history:e.slice(0,-1).map(e=>({role:"user"===e.role?"user":"model",parts:[{text:e.content}]}))});return(await r.sendMessage(e[e.length-1].content)).response.text()}async generateWebsite(e,t){let r=this.genAI.getGenerativeModel({model:"gemini-1.5-flash",generationConfig:{responseMimeType:"application/json"}}),n=`You are a senior-level AI Software Architect. 
+    Generate a full production-ready website based on the user prompt.
+    Return a JSON object with a 'files' array, where each item has 'path' and 'content'.
+    Include:
+    - Frontend (React/Next.js)
+    - Tailwind CSS styles
+    - Basic API routes
+    - README.md
+    
+    Structure the JSON like this:
+    {
+      "files": [
+        { "path": "app/page.tsx", "content": "..." },
+        { "path": "package.json", "content": "..." }
+      ]
+    }`,s=(await r.generateContent([{text:n},{text:`User Prompt: ${e}`}])).response.text();try{return JSON.parse(s)}catch(e){return console.error("Failed to parse AI response as JSON:",s),{files:[{path:"error.txt",content:"Failed to generate website structure."}]}}}}class a{async chat(e,t){return t.includes("gemini"),this.gemini.chat(e,t)}async generateWebsite(e,t){return t.includes("gemini"),this.gemini.generateWebsite(e,t)}constructor(){this.gemini=new s}}let i=new a}};var t=require("../../../webpack-runtime.js");t.C(e);var r=e=>t(t.s=e),n=t.X(0,[948,972,258],()=>r(2219));module.exports=n})();

@@ -1,20 +1,48 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# AI Studio - Website Builder Platform
 
-# Run and deploy your AI Studio app
+A production-ready AI Website Builder inspired by Google AI Studio.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/17WA3pGFgtq7fZAAejJCpr38bbhR97yUc
+- **AI Chat Studio**: Professional chat interface with history and system/user messages.
+- **Model Selection**: Switch between Gemini 2.0, GPT-4o, and DeepSeek.
+- **Website Generation Engine**: Generates full-stack code based on natural language prompts.
+- **Live Preview**: Responsive preview of generated frontend with hot-reload.
+- **ZIP Export**: Download the entire source code of your generated website.
+- **File Upload**: Include local context in your AI generations.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: Next.js 14 (App Router), React 18, Tailwind CSS, Lucide Icons.
+- **Backend**: Next.js API Routes, Node.js, JSZip.
+- **AI**: Google Generative AI (Gemini), OpenAI API.
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables in `.env.local`:
+   ```
+   GEMINI_API_KEY=your_api_key
+   OPENAI_API_KEY=your_api_key
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+- `/app`: Next.js App Router pages and API routes.
+- `/components`: Reusable UI components.
+- `/lib`: Core business logic and AI provider abstraction.
+- `/styles`: Global CSS and Tailwind configurations.
+- `/public`: Static assets.
+
+## License
+
+MIT
